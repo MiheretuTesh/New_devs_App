@@ -165,6 +165,10 @@ export class StorageHealthChecker {
       const key = localStorage.key(i);
       if (!key) continue;
       
+      // The version marker is plain text ("2.0.0"), not JSON - JSON.parse would throw and
+      // it would be deleted as "corrupted", which makes the next page load wipe the login.
+      if (key === 'app_storage_version') continue;
+      
       try {
         const value = localStorage.getItem(key);
         if (!value) continue;

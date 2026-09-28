@@ -12,6 +12,8 @@ import { storageHealthChecker } from './StorageHealthChecker';
 import { storageRecoverySystem } from './StorageRecoverySystem';
 
 const STORAGE_VERSION_KEY = 'app_storage_version';
+// Where the local auth client keeps the login session. A migration must never wipe it.
+const AUTH_SESSION_KEY = 'base360-auth-token';
 const CURRENT_VERSION = '2.0.0'; // Keep at 2.0.0 to avoid forcing migration on existing users
 
 interface StorageSchema {
@@ -113,7 +115,7 @@ class LocalStorageManager {
       
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key && (key.includes('supabase') || key.includes('sb-'))) {
+        if (key && (key.includes('supabase') || key.includes('sb-') || key === AUTH_SESSION_KEY)) {
           const value = localStorage.getItem(key);
           if (value) {
             preservedData[key] = value;
@@ -239,7 +241,7 @@ class LocalStorageManager {
     
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && (key.includes('supabase') || key.includes('sb-'))) {
+      if (key && (key.includes('supabase') || key.includes('sb-') || key === AUTH_SESSION_KEY)) {
         const value = localStorage.getItem(key);
         if (value) {
           preservedData[key] = value;
